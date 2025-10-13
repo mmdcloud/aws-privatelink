@@ -109,7 +109,7 @@ resource "aws_lb" "nlb" {
   name               = "my-nlb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
+  subnets            = module.producer_public_subnets.subnets[*].id
 }
 
 resource "aws_lb_target_group" "nlb_tg" {
@@ -191,7 +191,7 @@ module "consumer_sg" {
 
 # Public Subnets
 module "consumer_public_subnets" {
-  source = "../../../modules/vpc/subnets"
+  source = "./modules/vpc/subnets"
   name   = "consumer-public-subnet"
   subnets = [
     {
@@ -288,7 +288,7 @@ module "provider_instance" {
   instance_type               = "t2.micro"
   associate_public_ip_address = true
   key_name                    = data.aws_key_pair.key_pair.key_name
-  subnet_id                   = module.producer_vpc.subnets[0].id
+  subnet_id                   = module.producer_public_subnets.subnets[0].id
   security_groups             = [module.producer_sg.id]
   user_data                   = filebase64("${path.module}/scripts/user_data.sh")
 }
@@ -300,7 +300,7 @@ module "consumer_instance" {
   instance_type               = "t2.micro"
   associate_public_ip_address = true
   key_name                    = data.aws_key_pair.key_pair.key_name
-  subnet_id                   = module.consumer_vpc.subnets[0].id
+  subnet_id                   = module.consumer_public_subnets.subnets[0].id
   security_groups             = [module.consumer_sg.id]
   user_data                   = filebase64("${path.module}/scripts/user_data.sh")
 }
