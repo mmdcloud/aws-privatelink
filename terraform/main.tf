@@ -26,8 +26,8 @@ module "producer_sg" {
       description     = "HTTP traffic"
     },
     {
-      from_port       = 443
-      to_port         = 443
+      from_port       = 22
+      to_port         = 22
       protocol        = "tcp"
       self            = "false"
       cidr_blocks     = ["0.0.0.0/0"]
@@ -106,7 +106,7 @@ module "producer_public_rt" {
 
 # Network Load Balancer
 resource "aws_lb" "nlb" {
-  name               = "my-nlb"
+  name               = "nlb"
   internal           = false
   load_balancer_type = "network"
   subnets            = module.producer_public_subnets.subnets[*].id
@@ -170,8 +170,8 @@ module "consumer_sg" {
       description     = "HTTP traffic"
     },
     {
-      from_port       = 443
-      to_port         = 443
+      from_port       = 22
+      to_port         = 22
       protocol        = "tcp"
       self            = "false"
       cidr_blocks     = ["0.0.0.0/0"]
