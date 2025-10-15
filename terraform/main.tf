@@ -302,5 +302,4 @@ module "consumer_instance" {
   key_name                    = data.aws_key_pair.key_pair.key_name
   subnet_id                   = module.consumer_public_subnets.subnets[0].id
   security_groups             = [module.consumer_sg.id]
-  user_data                   = filebase64("${path.module}/scripts/user_data.sh")
 }

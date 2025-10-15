@@ -5,4 +5,7 @@ variable "associate_public_ip_address"{}
 variable "key_name"{}
 variable "subnet_id"{}
 variable "security_groups"{}
-variable "user_data"{}
+variable "user_data"{
+    type = string
+    default = ""
+}
