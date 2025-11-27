@@ -58,7 +58,7 @@ resource "aws_lb" "nlb" {
   name               = "nlb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = module.producer_public_subnets.subnets[*].id
+  subnets            = module.producer_vpc.public_subnets
 }
 
 resource "aws_lb_target_group" "nlb_tg" {
@@ -150,8 +150,8 @@ resource "aws_vpc_endpoint" "consumer_endpoint" {
   vpc_id              = module.consumer_vpc.vpc_id
   service_name        = aws_vpc_endpoint_service.vpc_endpoint_service.service_name
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [module.consumer_public_subnets.subnets[0].id]
-  security_group_ids  = [module.consumer_sg.id]
+  subnet_ids          = module.consumer_vpc.public_subnets
+  security_group_ids  = [aws_security_group.consumer_sg.id]
   private_dns_enabled = false
 }
 
@@ -186,8 +186,8 @@ module "provider_instance" {
   instance_type               = "t2.micro"
   associate_public_ip_address = true
   key_name                    = data.aws_key_pair.key_pair.key_name
-  subnet_id                   = module.producer_public_subnets.subnets[0].id
-  security_groups             = [module.producer_sg.id]
+  subnet_id                   = module.producer_vpc.public_subnets[0]
+  security_groups             = [aws_security_group.producer_sg.id]
   user_data                   = filebase64("${path.module}/scripts/user_data.sh")
 }
 
@@ -198,6 +198,6 @@ module "consumer_instance" {
   instance_type               = "t2.micro"
   associate_public_ip_address = true
   key_name                    = data.aws_key_pair.key_pair.key_name
-  subnet_id                   = module.consumer_public_subnets.subnets[0].id
-  security_groups             = [module.consumer_sg.id]
+  subnet_id                   = module.consumer_vpc.public_subnets[0]
+  security_groups             = [aws_security_group.consumer_sg.id]
 }
